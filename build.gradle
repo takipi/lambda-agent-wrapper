@@ -1,0 +1,31 @@
+plugins {
+  // Apply the java plugin to add support for Java
+  id 'java'
+  id 'eclipse'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = 'http://repo.maven.apache.org/maven2'
+    }
+}
+
+dependencies {
+  compile 'com.amazonaws:aws-lambda-java-core:1.2.0'
+  compile 'com.google.code.gson:gson:2.8.2'
+  compile files(org.gradle.internal.jvm.Jvm.current().toolsJar)
+
+}
+
+jar {
+  // make a fatjar otherwise it's painful getting the boot-class-path correct when deploying
+  manifest {
+    attributes( 
+      "Agent-Class": "com.sparktale.bugtale.meta.amagent.Agent", 
+      "Can-Redefine-Classes": true, 
+      "Can-Retransform-Classes": true, 
+      "Premain-Class": "com.sparktale.bugtale.meta.amagent.Agent",
+      "Boot-Class-Path": "lambda-agent-wrapper.jar")
+  }
+}
